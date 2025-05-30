@@ -319,7 +319,7 @@ def generar_diagrama_bifurcaciones(rango_amplitudes, parametros_sistema, paramet
 # Parámetros físicos del sistema
 CoeficienteAmortiguamiento = 0.2    # Coeficiente de amortiguamiento del sistema (1/s)
 FrecuenciaNatural = 1.0             # Frecuencia de oscilación del péndulo cuando no está sometido a ninguna fuerza (rad/s)
-Amplitud =  1.3                     # Amplitud de la fuerza externa (s^-2)
+Amplitud = 1.3                     # Amplitud de la fuerza externa (s^-2)
 FrecuenciaFuerzaExterna = 2         # Frecuencia de oscilación de la fuerza externa (rad/s)
 
 # Tipos de amortiguamiento:
@@ -523,12 +523,13 @@ if calcular_errores:
 if generar_graficas:
     # Configuración para todas las gráficas
     plt.rcParams.update({
-        'font.size': 10,
-        'axes.labelsize': 12,
-        'axes.titlesize': 14,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'figure.titlesize': 16,
+        'font.size': 12,
+        'axes.labelsize': 16,
+        'axes.titlesize': 18,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 14,
+        'figure.titlesize': 20,
         'figure.figsize': (8, 6),
         'savefig.dpi': 300,
         'savefig.bbox': 'tight'
@@ -544,7 +545,7 @@ if generar_graficas:
     plt.title('Diagrama de Fases del Péndulo Forzado')
     plt.legend()
     plt.grid(True)
-    plt.xlim(-np.pi, np.pi) # Limitar eje theta
+    plt.axis('tight')
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloForzado_DiagramaFases.png')
     plt.close()
@@ -555,7 +556,7 @@ if generar_graficas:
         plt.figure(figsize=(10, 8))
         
         # Graficar primero la trayectoria completa (diagrama de fases)
-        plt.scatter(Variables_norm[:, 0], Variables_norm[:, 1], s=0.5, color='blue', alpha=0.3, label='Trayectoria')
+        plt.scatter(Variables_norm[:, 0], Variables_norm[:, 1], s=0.5, color='blue', alpha=0.6, label='Trayectoria')
         
         # Superponer el mapa de densidad de puntos de Poincaré
         if len(puntos_poincare) >= 10:
@@ -570,7 +571,6 @@ if generar_graficas:
             # Crear hexbin con colores que destaquen sobre el diagrama de fases
             hb = plt.hexbin(puntos_poincare[:, 0], puntos_poincare[:, 1], 
                           gridsize=50, cmap='plasma_r', bins='log',  # Escala logarítmica e invertida
-                          extent=[-np.pi, np.pi, y_min, y_max],
                           mincnt=1, alpha=0.7)  # Alpha para ver el diagrama de fases debajo
             cb = plt.colorbar(hb, label='log10(N) puntos')
         else:
@@ -582,7 +582,7 @@ if generar_graficas:
         plt.ylabel('$\\dot{\\theta}$ (rad/s)')
         plt.title(f'Mapa de Poincaré sobre Diagrama de Fases\n(Descartando {NumeroPeriodosTransitorio} periodos iniciales)')
         plt.grid(True)
-        plt.xlim(-np.pi, np.pi)
+        plt.axis('tight')
         plt.legend(loc='upper right')
         plt.tight_layout()
         plt.savefig(f'{carpetaDatos}/PenduloForzado_MapaPoincare_Combinado.png', dpi=300, bbox_inches='tight')
@@ -592,13 +592,13 @@ if generar_graficas:
         if len(puntos_poincare) >= 20:
             plt.figure(figsize=(10, 8))
             h = plt.hist2d(puntos_poincare[:, 0], puntos_poincare[:, 1], bins=60, 
-                         cmap='YlOrRd', norm=plt.matplotlib.colors.LogNorm(), 
-                         range=[[-np.pi, np.pi], [min(puntos_poincare[:, 1]), max(puntos_poincare[:, 1])]])
+                         cmap='YlOrRd', norm=plt.matplotlib.colors.LogNorm())
             plt.colorbar(h[3], label='Número de puntos')
             plt.xlabel('$\\theta$ (rad)')
             plt.ylabel('$\\dot{\\theta}$ (rad/s)')
             plt.title('Concentración de Puntos del Mapa de Poincaré (hist2d)')
             plt.grid(True)
+            plt.axis('tight')
             plt.close()
             
             # Mostrar estadísticas de concentración de puntos en la terminal
@@ -617,12 +617,14 @@ if generar_graficas:
     ax1.set_ylabel('$\\theta$ (rad)')
     ax1.set_title('Evolución de $\\theta$ y $\\dot{\\theta}$ en el tiempo')
     ax1.grid(True)
+    ax1.axis('tight')
 
     # Gráfica de Velocidad vs tiempo
     ax2.plot(Tiempo, Variables_norm[:, 1], color='red')
     ax2.set_xlabel('Tiempo (s)')
     ax2.set_ylabel('$\\dot{\\theta}$ (rad/s)')
     ax2.grid(True)
+    ax2.axis('tight')
 
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloForzado_ThetaYVelocidadTiempo.png')
@@ -637,12 +639,14 @@ if generar_graficas:
         axs[0].set_ylabel('Error $\\theta$ (rad)')
         axs[0].set_title('Análisis Riguroso de Error del Método RK4')
         axs[0].grid(True)
+        axs[0].axis('tight')
         
         # Gráfica de error en dtheta/dt
         axs[1].semilogy(tiempos_error, errores_locales[:, 1], 'r-')
         axs[1].set_xlabel('Tiempo (s)')
         axs[1].set_ylabel('Error $\\dot{\\theta}$ (rad/s)')
         axs[1].grid(True)
+        axs[1].axis('tight')
         
         # En lugar de guardar la gráfica, mostrar los errores en terminal
         plt.close()
@@ -670,6 +674,7 @@ if generar_graficas:
         plt.ylabel('Discrepancia (escala log)')
         plt.title('Análisis de Sensibilidad a Condiciones Iniciales')
         plt.grid(True)
+        plt.axis('tight')
         plt.tight_layout()
         plt.close()
 
@@ -692,7 +697,7 @@ if generar_graficas:
             print(f"Tiempo estimado de duplicación: {tiempo_duplicacion:.4f} s")
         
         # Gráfica para estimar el exponente de Lyapunov
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(12, 9))
         plt.plot(Tiempo, log_discrepancia, 'r-')
         
         # Estimar el exponente de Lyapunov con regresión lineal
@@ -726,12 +731,20 @@ if generar_graficas:
                 poly1d_fn = np.poly1d(coef)
                 plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--', 
                         label=f'$\\lambda_{{max}} = {lyapunov_exponent:.4f} \\pm {lyapunov_error:.4f}$')
+                
+                # Añadir ecuación de la regresión en un cuadro de texto separado
+                intercept = coef[1]
+                ecuacion_text = f'$y = {lyapunov_exponent:.4f}t + {intercept:.4f}$'
+                plt.text(0.02, 0.98, ecuacion_text, transform=plt.gca().transAxes, 
+                        fontsize=14, verticalalignment='top', horizontalalignment='left',
+                        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
         
         plt.xlabel('Tiempo (s)')
         plt.ylabel('ln(Discrepancia)')
         plt.title('Estimación del Exponente de Lyapunov')
         plt.legend()
         plt.grid(True)
+        plt.axis('tight')
         plt.tight_layout()
         plt.savefig(f'{carpetaDatos}/PenduloForzado_ExponenteLyapunov.png')
         plt.close()
@@ -779,7 +792,7 @@ if generar_graficas:
         plt.ylabel('$\\theta$ (rad)')
         plt.title('Diagrama de Bifurcaciones del Péndulo Forzado')
         plt.grid(True)
-        plt.ylim(-np.pi, np.pi)
+        plt.axis('tight')
         plt.tight_layout()
         plt.savefig(f'{carpetaDatos}/PenduloForzado_Bifurcaciones.png', dpi=300)
         plt.close()

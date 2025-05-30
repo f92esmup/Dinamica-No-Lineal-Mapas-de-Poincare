@@ -432,13 +432,13 @@ t_min = 3.0                  # Tiempo mínimo para registrar puntos de Poincaré
 os.makedirs(carpetaDatos, exist_ok=True)
 
 # Energía del sistema para encontrar los puntos en el plano de Poincaré
-EnergiaDeseada = 1          # Energía deseada para las condiciones iniciales (J)
+EnergiaDeseada = 40          # Energía deseada para las condiciones iniciales (J)
 
 # Establezco las condiciones inciales de la posición y la velocidad en un vector fila.
 # CondicionesIniciales = [theta1, theta2, p1, p2]
 # donde: theta1, theta2 están en radianes (rad)
 #        p1, p2 son los momentos angulares generalizados (kg·m²/s)
-CondicionesIniciales = np.array([0.2, 0.0, 0.0, 0.0]) 
+CondicionesIniciales = np.array([1.2, 0.0, 0.0, 0.0]) 
 
 # Calcular p2 para obtener la energía deseada
 CondicionesIniciales[3] = EcuacionSegundoGrado(
@@ -613,12 +613,13 @@ datos_completos, puntos_poincare = PoincarePenduloDoble(
 if generar_graficas:
     # Configuración para todas las gráficas
     plt.rcParams.update({
-        'font.size': 10,
-        'axes.labelsize': 12,
-        'axes.titlesize': 14,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'figure.titlesize': 16,
+        'font.size': 12,
+        'axes.labelsize': 16,
+        'axes.titlesize': 18,
+        'xtick.labelsize': 12,
+        'ytick.labelsize': 12,
+        'legend.fontsize': 14,
+        'figure.titlesize': 20,
         'figure.figsize': (8, 6),
         'savefig.dpi': 300,
         'savefig.bbox': 'tight'
@@ -633,16 +634,20 @@ if generar_graficas:
     axs[0].set_ylabel('$\\theta_1$ (rad)')
     axs[0].set_title('Evolución Temporal de Variables del Péndulo Doble')
     axs[0].grid(True)
+    axs[0].axis('tight')
     axs[1].plot(Tiempo, Variables_norm[:, 1], color='red')
     axs[1].set_ylabel('$\\theta_2$ (rad)')
     axs[1].grid(True)
+    axs[1].axis('tight')
     axs[2].plot(Tiempo, Variables[:, 2], color='green')
     axs[2].set_ylabel('$p_1$ (kg·m²/s)')
     axs[2].grid(True)
+    axs[2].axis('tight')
     axs[3].plot(Tiempo, Variables[:, 3], color='purple')
     axs[3].set_ylabel('$p_2$ (kg·m²/s)')
     axs[3].set_xlabel('Tiempo (s)')
     axs[3].grid(True)
+    axs[3].axis('tight')
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.1)
     plt.savefig(f'{carpetaDatos}/PenduloDoble_TodasVariables_vs_Tiempo.png')
@@ -656,6 +661,7 @@ if generar_graficas:
     plt.title('Diagrama de Fase ($p_1$ vs $\\theta_1$)')
     plt.legend()
     plt.grid(True)
+    plt.axis('tight')
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloDoble_Fase_p1_theta1.png')
     plt.close()
@@ -668,6 +674,7 @@ if generar_graficas:
     plt.title('Diagrama de Fase ($p_2$ vs $\\theta_2$)')
     plt.legend()
     plt.grid(True)
+    plt.axis('tight')
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloDoble_Fase_p2_theta2.png')
     plt.close()
@@ -687,7 +694,7 @@ if generar_graficas:
     plt.title(f'Mapa de Poincaré (E ≈ {EnergiaHamiltoniana[0]:.2f} J)')
     plt.legend()
     plt.grid(True)
-    plt.xlim(-np.pi, np.pi)
+    plt.axis('tight')
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloDoble_Poincare_theta2_p2.png')
     plt.close()
@@ -707,14 +714,14 @@ if generar_graficas:
     plt.title(f'Mapa de Poincaré (E ≈ {EnergiaHamiltoniana[0]:.2f} J)')
     plt.legend()
     plt.grid(True)
-    plt.xlim(-np.pi, np.pi)
+    plt.axis('tight')
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloDoble_Poincare_theta1_p1.png')
     plt.close()
 
     # Gráfica Lyapunov
     if realizar_analisis_discrepancia and not np.isnan(lyapunov_exponent_pd):
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(12, 9))
         plt.plot(Tiempo, log_discrepancia, 'r-')
         
         # Usar los valores ya calculados en la sección 3
@@ -733,15 +740,23 @@ if generar_graficas:
                 
                 if len(t_reg_clean) > 1:
                     # Crear la línea de tendencia con el exponente ya calculado
-                    poly1d_fn = np.poly1d([lyapunov_exponent_pd, log_disc_reg_clean[0] - lyapunov_exponent_pd * t_reg_clean[0]])
+                    intercept = log_disc_reg_clean[0] - lyapunov_exponent_pd * t_reg_clean[0]
+                    poly1d_fn = np.poly1d([lyapunov_exponent_pd, intercept])
                     plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--', 
                             label=f'$\\lambda_{{max}} = {lyapunov_exponent_pd:.4f} \\pm {lyapunov_error_pd:.4f}$')
+                    
+                    # Añadir ecuación de la regresión en un cuadro de texto separado
+                    ecuacion_text = f'$y = {lyapunov_exponent_pd:.4f}t + {intercept:.4f}$'
+                    plt.text(0.02, 0.98, ecuacion_text, transform=plt.gca().transAxes, 
+                            fontsize=14, verticalalignment='top', horizontalalignment='left',
+                            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
         
         plt.xlabel('Tiempo (s)')
         plt.ylabel('ln(Discrepancia)')
         plt.title('Estimación del Exponente de Lyapunov (Péndulo Doble)')
         plt.legend()
         plt.grid(True)
+        plt.axis('tight')
         plt.tight_layout()
         plt.savefig(f'{carpetaDatos}/PenduloDoble_ExponenteLyapunov.png')
         plt.close()

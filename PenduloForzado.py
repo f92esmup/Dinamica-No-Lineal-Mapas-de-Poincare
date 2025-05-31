@@ -75,7 +75,7 @@ def PoincarePenduloForzado(Tiempo, Variables, PeriodoFuerzaExterna, NumeroPeriod
     nombreArchivoPoincare: str
         Nombre del archivo CSV donde se guardarán los puntos de Poincaré (theta, dtheta/dt).
         
-    Retorna:
+    Devuelve:
     --------
     datos_completos: array
         Array con tiempo (s), theta (rad), dtheta/dt (rad/s).
@@ -147,7 +147,7 @@ def calcular_error_rk4(func, y, t, h, args=()):
     args: tuple, opcional
         Argumentos adicionales para la función func.
         
-    Retorna:
+    Devuelve:
     --------
     error_estimado: array
         Estimación del error local en cada componente.
@@ -196,7 +196,7 @@ def calcular_discrepancia(Variables1, Variables2):
     Variables2: ndarray
         Segunda trayectoria con una pequeña perturbación inicial.
         
-    Retorna:
+    Devuelve:
     --------
     discrepancia: ndarray
         Array con la discrepancia (distancia euclidiana) en cada paso de tiempo.
@@ -229,7 +229,7 @@ def generar_diagrama_bifurcaciones(rango_amplitudes, parametros_sistema, paramet
     nombre_archivo: str, opcional
         Nombre del archivo donde guardar el diagrama de bifurcaciones.
     
-    Retorna:
+    Devuelve:
     --------
     A_bif: ndarray
         Array con los valores de amplitud para cada punto del diagrama.

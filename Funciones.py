@@ -72,7 +72,7 @@ def NormalizarAngulos(Variables):
         Array con las variables del sistema. Se asume que las dos primeras
         columnas son ángulos (rad) que deben ser normalizados.
         
-    Retorna:
+    Devuelve:
     --------
     Variables_norm: ndarray
         Array con las mismas dimensiones que el original pero con los ángulos

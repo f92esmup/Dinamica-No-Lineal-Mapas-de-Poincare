@@ -53,7 +53,7 @@ def PenduloDoble(Tiempo, Variables, m=1.0, L=1.0, Gravedad=9.8):
     Gravedad: float
         Aceleración de la gravedad (m/s²).
         
-    Retorna:
+    Devuelve:
     --------
     array
         Las derivadas [dtheta1/dt, dtheta2/dt, dp1/dt, dp2/dt].
@@ -109,7 +109,7 @@ def HamiltonPenduloDoble(Variables, m=1.0, L=1.0, Gravedad=9.8):
     Gravedad: float
         Aceleración de la gravedad (m/s²).
     
-    Retorna:
+    Devuelve:
     --------
     float
         La energía Hamiltoniana total del sistema (J).
@@ -159,7 +159,7 @@ def EcuacionSegundoGrado(EnergiaDeseada, CondicionesInicialesParciales, m, L, Gr
     signo: str
         '+' o '-' para seleccionar la solución deseada.
         
-    Retorna:
+    Devuelve:
     --------
     float
         Valor de p2 que cumple con la energía deseada.
@@ -227,7 +227,7 @@ def PoincarePenduloDoble(Tiempo, Variables, Derivadas, nombreArchivoDatos=None, 
     t_min: float
         Tiempo mínimo para comenzar a registrar puntos de Poincaré (s), para descartar el transitorio.
 
-    Retorna:
+    Devuelve:
     --------
     datos_completos: ndarray
         Datos completos de la trayectoria guardados en el formato [t, theta1, theta2, p1, p2].
@@ -337,7 +337,7 @@ def calcular_error_rk4(func, y, t, h, args=()):
     args: tuple, opcional
         Argumentos adicionales para la función func.
         
-    Retorna:
+    Devuelve:
     --------
     error_estimado: array
         Estimación del error local en cada componente.
@@ -386,7 +386,7 @@ def calcular_discrepancia(Variables1, Variables2):
     Variables2: ndarray
         Segunda trayectoria con una pequeña perturbación inicial.
         
-    Retorna:
+    Devuelve:
     --------
     discrepancia: ndarray
         Array con la discrepancia (distancia euclidiana) en cada paso de tiempo.

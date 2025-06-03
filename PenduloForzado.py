@@ -698,7 +698,7 @@ if generar_graficas:
         
         # Gráfica para estimar el exponente de Lyapunov
         plt.figure(figsize=(12, 9))
-        plt.plot(Tiempo, log_discrepancia, 'r-')
+        plt.plot(Tiempo, log_discrepancia, 'r-', label='Datos')
         
         # Estimar el exponente de Lyapunov con regresión lineal
         # Usar solo una parte específica de la curva, entre t=0s y t=25s
@@ -739,7 +739,7 @@ if generar_graficas:
                 r_squared = correlation_xy**2
                 
                 # Plotear la línea de ajuste sin label para la leyenda
-                plt.plot(t_reg_clean, y_predicted, 'k--')
+                plt.plot(t_reg_clean, y_predicted, 'k--', label='Ajuste lineal')
                 
                 # Añadir ecuación de la regresión con errores y R² en un cuadro de texto
                 ecuacion_text = f'$\\ln(Discrepancia) = ({lyapunov_exponent:.4f} \\pm {lyapunov_error:.4f}) \\cdot Tiempo + ({intercept:.4f} \\pm {intercept_error:.4f})$\n$R^2 = {r_squared:.4f}$'

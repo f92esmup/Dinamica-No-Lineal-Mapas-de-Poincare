@@ -734,7 +734,7 @@ if generar_graficas:
     # Gráfica Lyapunov
     if realizar_analisis_discrepancia and not np.isnan(lyapunov_exponent_pd):
         plt.figure(figsize=(12, 9))
-        plt.plot(Tiempo, log_discrepancia, 'r-')
+        plt.plot(Tiempo, log_discrepancia, 'r-', label='Datos')
         
         # Usar los valores ya calculados en la sección 3
         if not np.isnan(lyapunov_exponent_pd):
@@ -753,7 +753,7 @@ if generar_graficas:
                 if len(t_reg_clean) > 1:
                     # Crear la línea de tendencia con el exponente ya calculado
                     poly1d_fn = np.poly1d([lyapunov_exponent_pd, intercept_pd])
-                    plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--')
+                    plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--', label='Ajuste lineal')
                     
                     # Añadir ecuación de la regresión con errores y R² en un cuadro de texto
                     ecuacion_text = f'$\\ln(Discrepancia) = ({lyapunov_exponent_pd:.4f} \\pm {lyapunov_error_pd:.4f}) \\cdot Tiempo + ({intercept_pd:.4f} \\pm {intercept_error_pd:.4f})$\n$R^2 = {r_squared_pd:.4f}$'

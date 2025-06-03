@@ -724,17 +724,25 @@ if generar_graficas:
                 # Realizar regresión lineal y obtener parámetros de ajuste y matriz de covarianza
                 coef, cov = np.polyfit(t_reg_clean, log_disc_reg_clean, 1, cov=True)
                 lyapunov_exponent = coef[0]  # Pendiente = exponente de Lyapunov
+                intercept = coef[1]  # Intercepto
                 
-                # Calcular error estándar del exponente (raíz de la varianza de la pendiente)
-                lyapunov_error = np.sqrt(cov[0, 0])
+                # Calcular errores estándar del exponente e intercepto
+                lyapunov_error = np.sqrt(cov[0, 0])  # Error de la pendiente
+                intercept_error = np.sqrt(cov[1, 1])  # Error del intercepto
                 
                 poly1d_fn = np.poly1d(coef)
-                plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--', 
-                        label=f'$\\lambda_{{max}} = {lyapunov_exponent:.4f} \\pm {lyapunov_error:.4f}$')
+                y_predicted = poly1d_fn(t_reg_clean)
                 
-                # Añadir ecuación de la regresión en un cuadro de texto separado
-                intercept = coef[1]
-                ecuacion_text = f'$y = {lyapunov_exponent:.4f}t + {intercept:.4f}$'
+                # Calcular R²
+                correlation_matrix = np.corrcoef(log_disc_reg_clean, y_predicted)
+                correlation_xy = correlation_matrix[0, 1]
+                r_squared = correlation_xy**2
+                
+                # Plotear la línea de ajuste sin label para la leyenda
+                plt.plot(t_reg_clean, y_predicted, 'k--')
+                
+                # Añadir ecuación de la regresión con errores y R² en un cuadro de texto
+                ecuacion_text = f'$\\ln(Discrepancia) = ({lyapunov_exponent:.4f} \\pm {lyapunov_error:.4f}) \\cdot Tiempo + ({intercept:.4f} \\pm {intercept_error:.4f})$\n$R^2 = {r_squared:.4f}$'
                 plt.text(0.02, 0.98, ecuacion_text, transform=plt.gca().transAxes, 
                         fontsize=14, verticalalignment='top', horizontalalignment='left',
                         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))

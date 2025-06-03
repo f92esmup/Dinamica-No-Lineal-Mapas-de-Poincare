@@ -550,6 +550,9 @@ if realizar_analisis_discrepancia:
     
     lyapunov_exponent_pd = np.nan
     lyapunov_error_pd = np.nan
+    intercept_pd = np.nan
+    intercept_error_pd = np.nan
+    r_squared_pd = np.nan
     
     if idx_min_regresion < idx_max_regresion and idx_max_regresion > idx_min_regresion + 1:  # Necesitamos al menos 2 puntos
         t_reg = Tiempo[idx_min_regresion:idx_max_regresion]
@@ -564,9 +567,18 @@ if realizar_analisis_discrepancia:
             # Realizar regresión lineal y obtener parámetros de ajuste
             coef, cov = np.polyfit(t_reg_clean, log_disc_reg_clean, 1, cov=True)
             lyapunov_exponent_pd = coef[0]  # Pendiente = exponente de Lyapunov
+            intercept_pd = coef[1]  # Intercepto
             
-            # Calcular error estándar del exponente (raíz de la varianza de la pendiente)
-            lyapunov_error_pd = np.sqrt(cov[0, 0])
+            # Calcular errores estándar del exponente e intercepto
+            lyapunov_error_pd = np.sqrt(cov[0, 0])  # Error de la pendiente
+            intercept_error_pd = np.sqrt(cov[1, 1])  # Error del intercepto
+            
+            # Calcular R²
+            poly1d_fn = np.poly1d(coef)
+            y_predicted = poly1d_fn(t_reg_clean)
+            correlation_matrix = np.corrcoef(log_disc_reg_clean, y_predicted)
+            correlation_xy = correlation_matrix[0, 1]
+            r_squared_pd = correlation_xy**2
     
     # Guardar datos de discrepancia
     datos_discrepancia = np.column_stack((Tiempo, discrepancia, log_discrepancia))
@@ -740,13 +752,11 @@ if generar_graficas:
                 
                 if len(t_reg_clean) > 1:
                     # Crear la línea de tendencia con el exponente ya calculado
-                    intercept = log_disc_reg_clean[0] - lyapunov_exponent_pd * t_reg_clean[0]
-                    poly1d_fn = np.poly1d([lyapunov_exponent_pd, intercept])
-                    plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--', 
-                            label=f'$\\lambda_{{max}} = {lyapunov_exponent_pd:.4f} \\pm {lyapunov_error_pd:.4f}$')
+                    poly1d_fn = np.poly1d([lyapunov_exponent_pd, intercept_pd])
+                    plt.plot(t_reg_clean, poly1d_fn(t_reg_clean), 'k--')
                     
-                    # Añadir ecuación de la regresión en un cuadro de texto separado
-                    ecuacion_text = f'$y = {lyapunov_exponent_pd:.4f}t + {intercept:.4f}$'
+                    # Añadir ecuación de la regresión con errores y R² en un cuadro de texto
+                    ecuacion_text = f'$\\ln(Discrepancia) = ({lyapunov_exponent_pd:.4f} \\pm {lyapunov_error_pd:.4f}) \\cdot Tiempo + ({intercept_pd:.4f} \\pm {intercept_error_pd:.4f})$\n$R^2 = {r_squared_pd:.4f}$'
                     plt.text(0.02, 0.98, ecuacion_text, transform=plt.gca().transAxes, 
                             fontsize=14, verticalalignment='top', horizontalalignment='left',
                             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))

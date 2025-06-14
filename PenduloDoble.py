@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import os
 import Funciones as Funciones
 import subprocess
@@ -432,13 +433,13 @@ t_min = 3.0                  # Tiempo mínimo para registrar puntos de Poincaré
 os.makedirs(carpetaDatos, exist_ok=True)
 
 # Energía del sistema para encontrar los puntos en el plano de Poincaré
-EnergiaDeseada = 40          # Energía deseada para las condiciones iniciales (J)
+EnergiaDeseada = 15          # Energía deseada para las condiciones iniciales (J)
 
 # Establezco las condiciones inciales de la posición y la velocidad en un vector fila.
 # CondicionesIniciales = [theta1, theta2, p1, p2]
 # donde: theta1, theta2 están en radianes (rad)
 #        p1, p2 son los momentos angulares generalizados (kg·m²/s)
-CondicionesIniciales = np.array([1.2, 0.0, 0.0, 0.0]) 
+CondicionesIniciales = np.array([1.1, 0.0, 0.0, 0.0]) 
 
 # Calcular p2 para obtener la energía deseada
 CondicionesIniciales[3] = EcuacionSegundoGrado(
@@ -690,6 +691,69 @@ if generar_graficas:
     plt.tight_layout()
     plt.savefig(f'{carpetaDatos}/PenduloDoble_Fase_p2_theta2.png')
     plt.close()
+
+    # 3. Representación 3D: theta1 vs theta2 vs p1
+    fig = plt.figure(figsize=(12, 9))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Usar submuestreo para mejor rendimiento visual si hay muchos puntos
+    n_points = len(Variables_norm)
+    if n_points > 10000:
+        step = n_points // 10000
+        indices = np.arange(0, n_points, step)
+    else:
+        indices = np.arange(n_points)
+    
+    # Crear el scatter plot 3D con colores que representen el tiempo
+    scatter = ax.scatter(Variables_norm[indices, 0], 
+                        Variables_norm[indices, 1], 
+                        Variables[indices, 2], 
+                        c=Tiempo[indices], 
+                        cmap='viridis', 
+                        s=1, 
+                        alpha=0.6)
+    
+    ax.set_xlabel('$\\theta_1$ (rad)', fontsize=14)
+    ax.set_ylabel('$\\theta_2$ (rad)', fontsize=14)
+    ax.set_zlabel('$p_1$ (kg·m²/s)', fontsize=14)
+    ax.set_title('Representación 3D del Espacio de Fases\n($\\theta_1$ vs $\\theta_2$ vs $p_1$)', fontsize=16)
+    
+    # Agregar barra de colores para mostrar el tiempo
+    cbar = plt.colorbar(scatter, ax=ax, shrink=0.5, aspect=20)
+    cbar.set_label('Tiempo (s)', fontsize=12)
+    
+    # Mejorar la visualización
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()  # Mostrar interactivamente en lugar de guardar
+
+    # 4. Representación 3D alternativa: theta1 vs theta2 vs p1 (sin colores de tiempo)
+    fig = plt.figure(figsize=(12, 9))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Gráfica de línea 3D para mostrar la trayectoria
+    ax.plot(Variables_norm[indices, 0], 
+            Variables_norm[indices, 1], 
+            Variables[indices, 2], 
+            color='blue', 
+            linewidth=0.5, 
+            alpha=0.7)
+    
+    # Marcar el punto inicial en verde y el final en rojo
+    ax.scatter(Variables_norm[0, 0], Variables_norm[0, 1], Variables[0, 2], 
+               color='green', s=100, label='Inicio')
+    ax.scatter(Variables_norm[-1, 0], Variables_norm[-1, 1], Variables[-1, 2], 
+               color='red', s=100, label='Final')
+    
+    ax.set_xlabel('$\\theta_1$ (rad)', fontsize=14)
+    ax.set_ylabel('$\\theta_2$ (rad)', fontsize=14)
+    ax.set_zlabel('$p_1$ (kg·m²/s)', fontsize=14)
+    ax.set_title('Trayectoria 3D del Espacio de Fases\n($\\theta_1$ vs $\\theta_2$ vs $p_1$)', fontsize=16)
+    
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()  # Mostrar interactivamente en lugar de guardar
 
     # 5. Mapa de Poincaré (theta2 vs p2)
     plt.figure()

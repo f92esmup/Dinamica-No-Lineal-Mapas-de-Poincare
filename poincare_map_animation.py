@@ -4,16 +4,10 @@ import numpy as np
 class SimplePoincareMapExplanation(Scene):
     def construct(self):
         # 1. Setup the Scene
-        # Create a 2D NumberPlane for the background.
-        plane = NumberPlane(
-            x_range=[-4, 4, 1],
-            y_range=[-3, 3, 1],
-            background_line_style={
-                "stroke_opacity": 0.2,
-                "stroke_width": 1,
-            }
-        )
-        self.add(plane)
+        # Create coordinate axes without grid
+        x_axis = Line(start=LEFT*4, end=RIGHT*4, color=WHITE, stroke_width=2)
+        y_axis = Line(start=DOWN*3, end=UP*3, color=WHITE, stroke_width=2)
+        self.add(x_axis, y_axis)
 
         # 2. Define the objects
         # Define a logarithmic spiral using a ParametricFunction. It should start far from the center.
